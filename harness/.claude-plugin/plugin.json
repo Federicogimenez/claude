@@ -1,0 +1,9 @@
+{
+  "name": "harness",
+  "description": "Harness federicode: roles Architect/Dev/Leader, skills implement/test y templates de workspace, proyecto y task.",
+  "version": "1.3.0",
+  "author": {
+    "name": "Federico Gimenez",
+    "email": "gimanezf@gmail.com"
+  }
+}

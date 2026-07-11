@@ -1,0 +1,17 @@
+{
+  "name": "federicode",
+  "owner": {
+    "name": "Federico Gimenez",
+    "email": "gimanezf@gmail.com"
+  },
+  "description": "Harness global de federicode: roles, skills y templates compartidos por todos los trabajos.",
+  "version": "1.3.0",
+  "plugins": [
+    {
+      "name": "harness",
+      "source": "./harness",
+      "description": "Roles Architect/Dev/Leader, skills de ejecución y templates de proyecto/task.",
+      "version": "1.3.0"
+    }
+  ]
+}
