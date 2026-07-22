@@ -17,7 +17,7 @@ Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz
 
 - Copiá `templates/workspace/CLAUDE.md` a la raíz del workspace y completá sus particulares (qué sub-proyectos existen o se planifican, estado de cada uno). Si ya hay un CLAUDE.md viejo, **destilá sus particulares** al template nuevo — lo que era formato de trabajo queda afuera (lo aporta el plugin).
 - Creá `business/` y `design-system/` desde `templates/shared/` (con su carpeta `resources/`).
-- Por cada **solution** existente o justificada (web, app, backoffice, backend…), sembrá su `.claude/` desde `templates/solution/`.
+- Por cada **solution** existente o justificada (web, app, backoffice, backend…), sembrá su `.claude/` y el `.graphifyignore` de su raíz desde `templates/solution/`.
 - Copiá `templates/settings/settings.json` al `.claude/settings.json` de la raíz del workspace (o fusionalo si ya existe): trae los permisos del loop (edits libres, shell y commit con confirmación).
 - **Topología git:** el workspace es **un solo repo** (monorepo de sub-proyectos) con raíz en la carpeta del trabajo. Si no está inicializado, `git init` en la raíz; no se crean repos por sub-proyecto.
 
@@ -38,10 +38,12 @@ Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz
 Cada solution con código lleva su **grafo**: es el code map automático de la tríada de memoria (grafo + `map.md` + `memory.md`).
 
 - Prerequisito por máquina: `uv tool install graphifyy` (una vez). Si falta, frená y pedile al humano correrlo.
-- Por cada solution con código: desde su raíz, `graphify update .` (construye `graphify-out/` — solo AST, sin LLM) y `graphify hook install` (reconstrucción post-commit automática).
+- **Scope del grafo — solo el código.** El grafo es el **sobrevuelo** (mind map) del code base de la solution, para análisis optimizado sobre estructura y conexiones: indexa su código (src, componentes; en un backend supabase: migrations y functions) y **excluye `.claude/`** — la memoria del proyecto es otra capa: cuando hace falta detalle o el porqué, se va a `map.md`/`memory.md`/`tasks/`, no al grafo. Lo garantiza el `.graphifyignore` de la raíz de la solution (viene con la siembra del paso 2; si la solution ya existía sin él, copialo de `templates/solution/`).
+- Por cada solution con código: desde su raíz, `graphify update .` (construye `graphify-out/` — solo AST, sin LLM). Si el grafo ya existía **sin** el `.graphifyignore`, reconstruilo limpio: borrá `graphify-out/` y volvé a correr `graphify update .`.
+- **Mantenimiento post-commit — wrapper monorepo, NO `graphify hook install`:** el hook nativo asume un repo por proyecto (un solo hook en la raíz, un solo grafo) y acá un repo = N solutions. Copiá `${CLAUDE_PLUGIN_ROOT}/templates/workspace/hooks/post-commit` a `.git/hooks/post-commit` del workspace y dale permisos de ejecución — reconstruye el grafo de cada solution tocada por el commit. Si ya había un hook nativo instalado (`graphify hook status` lo dice), corré `graphify hook uninstall` **antes**; si existe un post-commit ajeno, anexá el contenido del template al final en vez de pisarlo.
 - **No corras** `graphify claude install` ni `graphify install`: esas integraciones inyectan secciones en CLAUDE.md y hooks PreToolUse en toda sesión — acá el uso del grafo lo gobierna el harness (lo consultan Architect y Leader, no el Dev).
 - Agregá `graphify-out/` al `.gitignore` del workspace — el grafo se regenera local, no se commitea.
-- Solution sin código todavía: dejá anotado en su `map.md` que el grafo se crea con el primer scaffolding.
+- Solution sin código todavía: dejá anotado en su `map.md` que el grafo se crea con el primer scaffolding; el wrapper la toma solo apenas exista su `graphify-out/`.
 
 ## 5. No inventes contenido
 

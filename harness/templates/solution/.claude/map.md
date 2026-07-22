@@ -4,10 +4,11 @@
 
 ## El grafo (code map automático)
 
+- **Scope y función:** el sobrevuelo (mind map) del **código** de la solution — el `.graphifyignore` de la raíz excluye `.claude/`. Sirve para análisis optimizado de estructura y conexiones; el detalle y el porqué viven en la memoria (`map.md`, `memory.md`, `tasks/`).
 - Consultas: `graphify query "<keywords>"` · `graphify explain "<archivo o símbolo>"` · `graphify path <A> <B>` · `graphify affected "<X>"` (qué impacta X).
 - Las consultas matchean **labels de nodos** (archivos, símbolos, títulos): usá términos del código, no preguntas largas en lenguaje natural.
 - Vive en `graphify-out/` (raíz del proyecto, ignorado por git — se regenera local).
-- Lo reconstruye el hook post-commit (`graphify hook install`, solo AST, sin costo). Si el grafo no existe o está viejo: `graphify update .`
+- Lo reconstruye el hook post-commit del **workspace** (wrapper monorepo del harness, instalado por `/harness:adopt`; solo AST, sin costo; log en `~/.cache/graphify-rebuild.log`). Si el grafo no existe o está viejo: `graphify update .`
 
 ## Infra del proyecto
 _(build, cómo se corre, framework y ubicación de pruebas, deploy, qué NO debe subir al repo)_

@@ -38,7 +38,7 @@ Gate completo, en orden:
 
 La memoria de cada solution es una **tríada**: grafo (el *qué actual*, automático) + `map.md` (capa curada) + `memory.md` (el *por qué* histórico). Tu trabajo es que las tres cierren entre sí tras el commit:
 
-- **Grafo Graphify** — no lo redactás: lo reconstruye el hook post-commit (solo AST, sin costo). Verificá que el hook esté instalado y el grafo fresco; si no, `graphify update .`. La estructura del código **no se duplica** en el map.
+- **Grafo Graphify** — no lo redactás: lo reconstruye el hook post-commit del workspace (wrapper monorepo del harness — un solo hook en `.git/hooks/` que reconstruye el grafo de cada solution tocada; log en `~/.cache/graphify-rebuild.log`). Verificá que esté instalado (si falta, se reinstala con `/harness:adopt`, nunca con `graphify hook install`) y el grafo fresco; si no, `graphify update .` en la solution. La estructura del código **no se duplica** en el map.
 - **`map.md`** — solo lo que el grafo no puede inferir: infra (build, pruebas, deploy, qué no sube), integración con otros proyectos, convenciones de ubicación. Denso, veraz, corto.
 - **`memory.md`** — destilá lo aprendido (decisiones, principios confirmados o revisados, deuda, ideas parqueadas con motivo). Evolutiva, no acumulativa: fusioná lo redundante, podá lo obsoleto.
 - **Definiciones de `business/` / `design-system/`** — si la task cambió integración, contrato o lenguaje visual, re-derivalas para que sigan siendo veraces.

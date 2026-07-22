@@ -1,0 +1,4 @@
+# Scope del grafo Graphify: el CÓDIGO de la solution, nada más.
+# El grafo es el sobrevuelo (mind map) del code base para análisis optimizado;
+# el detalle y el porqué viven en la memoria del proyecto (.claude/), que es otra capa.
+.claude/
