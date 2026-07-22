@@ -3,7 +3,7 @@ description: Sembrar este workspace con el harness federicode (proyecto nuevo o 
 argument-hint: "[nombre del trabajo, opcional]"
 ---
 
-Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz de este trabajo). El formato de trabajo es global — vive en `trabajos/CLAUDE.md` y en este plugin — así que acá solo se crea **lo particular**: la anatomía de memoria y los alineadores. Los templates viven en `${CLAUDE_PLUGIN_ROOT}/templates/`.
+Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz de este trabajo). El formato de trabajo es global — vive en `${CLAUDE_PLUGIN_ROOT}/format.md` (que el stub `trabajos/CLAUDE.md` importa) y en este plugin — así que acá solo se crea **lo particular**: la anatomía de memoria y los alineadores. Los templates viven en `${CLAUDE_PLUGIN_ROOT}/templates/`.
 
 > **Regla de oro: transformá, no destruyas.** En un workspace con trayectoria, todo lo que tiene historia (briefs, docs, decisiones, standards, mapas) es **memoria del proyecto**: se reubica o se transforma a la anatomía nueva — mecánicamente, sin reescribirlo ni reinterpretarlo. Lo **único** que se elimina es lo que duplica el *formato de trabajo* (roles/agents, commands, skills de formato, templates locales): eso lo reemplaza el plugin. Ante la duda entre particular y formato: **conservá y anotá** en el reporte.
 
@@ -18,7 +18,7 @@ Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz
 - Copiá `templates/workspace/CLAUDE.md` a la raíz del workspace y completá sus particulares (qué sub-proyectos existen o se planifican, estado de cada uno). Si ya hay un CLAUDE.md viejo, **destilá sus particulares** al template nuevo — lo que era formato de trabajo queda afuera (lo aporta el plugin).
 - Creá `business/` y `design-system/` desde `templates/shared/` (con su carpeta `resources/`).
 - Por cada **solution** existente o justificada (web, app, backoffice, backend…), sembrá su `.claude/` y el `.graphifyignore` de su raíz desde `templates/solution/`.
-- Copiá `templates/settings/settings.json` al `.claude/settings.json` de la raíz del workspace (o fusionalo si ya existe): trae los permisos del loop (edits libres, shell y commit con confirmación).
+- Copiá `templates/settings/settings.json` al `.claude/settings.json` de la raíz del workspace (o fusionalo si ya existe): trae los permisos del loop — edits libres **pero solo bajo la raíz del workspace** (`Edit(/**)`), `trabajos/claude/**` denegado, shell y commit con confirmación. Si fusionás sobre un settings viejo, **sacá los `allow` de `Edit`/`Write`/`MultiEdit`/`NotebookEdit` sin path**: esas reglas habilitan el tool en todo el filesystem y perforan el scope de sesión.
 - **Topología git:** el workspace es **un solo repo** (monorepo de sub-proyectos) con raíz en la carpeta del trabajo. Si no está inicializado, `git init` en la raíz; no se crean repos por sub-proyecto.
 
 ## 3. Transformá lo viejo (solo instancia B)

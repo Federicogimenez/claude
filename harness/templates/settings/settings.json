@@ -1,14 +1,14 @@
 {
   "permissions": {
+    "deny": [
+      "Edit(//c/Users/Usuario/Documents/federicode/trabajos/claude/**)"
+    ],
     "ask": [
       "Bash(git commit:*)",
       "PowerShell"
     ],
     "allow": [
-      "Edit",
-      "Write",
-      "MultiEdit",
-      "NotebookEdit",
+      "Edit(/**)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",

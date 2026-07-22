@@ -10,7 +10,7 @@ La **única fuente de verdad del formato de trabajo** de todos los trabajos. Es 
 | Comandos: `/harness:architect` · `/harness:dev` · `/harness:leader` · `/harness:adopt` | `business/` y `design-system/` (definiciones + `resources/`) |
 | Skills: `implement`, `test` | `fundamentals/`, grafo Graphify (`graphify-out/`), `map.md`, `memory.md`, `tasks/` de cada solution |
 | Templates: workspace, solution, shared, task, settings | `.claude/settings.json` de cada repo (habilita el plugin + permisos) |
-| El loop y las reglas → [`trabajos/CLAUDE.md`](../CLAUDE.md) (se carga solo en toda sesión bajo `trabajos/`) | El código de cada solución |
+| El loop y las reglas → [`harness/format.md`](harness/format.md) (lo importa el stub `trabajos/CLAUDE.md`, y así se carga en toda sesión bajo `trabajos/`) | El código de cada solución |
 
 ## Estructura
 
@@ -19,11 +19,14 @@ claude/
 ├── .claude-plugin/marketplace.json   # marketplace "federicode"
 └── harness/                          # plugin "harness"
     ├── .claude-plugin/plugin.json
+    ├── format.md      el formato de trabajo (loop, roles, reglas)
     ├── agents/        architect.md · dev.md · leader.md
     ├── commands/      architect.md · dev.md · leader.md · adopt.md
     ├── skills/        implement/ · test/
     └── templates/     workspace/ · solution/ · shared/ · task/ · settings/
 ```
+
+`format.md` es el único archivo del harness que **no** se sirve desde el caché del plugin: el stub `trabajos/CLAUDE.md` lo importa por ruta (`@claude/harness/format.md`), así que se lee en vivo de esta carpeta y sus ediciones aplican sin bump de versión. El resto (agents, commands, skills, templates) sí pasa por el caché — ver *Mantenimiento*.
 
 ## Dependencia externa: Graphify
 
@@ -37,7 +40,9 @@ Cada workspace es **un solo repo git** (monorepo de sub-proyectos): el Leader co
 
 ## Modelo de sesión
 
-Se trabaja abriendo la **raíz de cada workspace** (ej. `trabajos/dedo/`), nunca `trabajos/` — el scope de la sesión es estricto a ese workspace. `trabajos/CLAUDE.md` se carga igual (los CLAUDE.md se heredan de directorios ancestros); los roles/comandos los aporta el plugin. Para **mantener el harness**, la sesión se abre en `trabajos/` — el único contexto donde `claude/` está en scope.
+Se trabaja abriendo la **raíz de cada workspace** (ej. `trabajos/dedo/`), nunca `trabajos/` — el scope de la sesión es estricto a ese workspace. `trabajos/CLAUDE.md` se carga igual (los CLAUDE.md se heredan de directorios ancestros) y arrastra por import a `harness/format.md`; los roles/comandos los aporta el plugin. Para **mantener el harness**, la sesión se abre en **`trabajos/claude/`** — su propia raíz, hermana de los workspaces y no su padre.
+
+El scope no es solo prosa: el `settings.json` que `/harness:adopt` deja en cada workspace permite editar únicamente bajo su raíz (`Edit(/**)`) y **deniega** explícitamente `trabajos/claude/**`. Un `deny` gana sobre cualquier `allow`, así que una sesión de workspace no puede tocar el harness ni por accidente ni por insistencia.
 
 ## Instalación (una sola vez, a nivel usuario)
 

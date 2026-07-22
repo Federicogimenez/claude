@@ -1,6 +1,6 @@
 # <trabajo> — Workspace raíz
 
-> Se carga al trabajar en cualquier parte de este trabajo. El **formato de trabajo** (roles, loop, anatomía) es global — viene de `trabajos/CLAUDE.md` y del plugin `harness@federicode` — y **no se redefine acá**. Este archivo guarda solo **lo particular** de este trabajo. Manténgase corto: cada token aquí se paga siempre.
+> Se carga al trabajar en cualquier parte de este trabajo. El **formato de trabajo** (roles, loop, anatomía) es global — viene del harness `harness@federicode` (`format.md` + el plugin) — y **no se redefine acá**. Este archivo guarda solo **lo particular** de este trabajo. Manténgase corto: cada token aquí se paga siempre.
 
 ## Qué es
 

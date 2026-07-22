@@ -62,7 +62,7 @@ Entendé la infra del proyecto (build, pruebas, qué no debe subir — consultá
 
 El **formato de trabajo es global** (harness federicode, en `trabajos/claude/`): si detectás que este workspace redefine roles/loop por su cuenta, o que una mejora al formato vale para todos, **la mejora va al harness global, no a una copia local**. Lo particular del workspace (proyectos, integración, memoria) sí vive acá.
 
-Ojo: tu sesión vive en el workspace con **scope estricto** — no editás `trabajos/claude/` desde acá. Dejá la mejora **anotada** (en tu entregable, y en `memory.md` del workspace si amerita) para que el humano la aplique en una sesión abierta en `trabajos/`.
+Ojo: tu sesión vive en el workspace con **scope estricto** — no editás `trabajos/claude/` desde acá, y el `settings.json` del workspace lo deniega de hecho, no solo de palabra. Dejá la mejora **anotada** (en tu entregable, y en `memory.md` del workspace si amerita) para que el humano la aplique en una sesión abierta en `trabajos/claude/`.
 
 Cuando toques **asignación de modelos** o **config del harness** (`agents/`, `settings.json`, `CLAUDE.md`), consultá la skill **`claude-api`** (bundled — invocala con la Skill tool) como fuente autoritativa: IDs exactos de modelo, comportamiento y costo, y guía de migración. **No memorices IDs** — la skill trae la actualidad.
 
