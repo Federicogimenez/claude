@@ -1,6 +1,8 @@
 # <trabajo> — Workspace raíz
 
-> Se carga al trabajar en cualquier parte de este trabajo. El **formato de trabajo** (roles, loop, anatomía) es global — viene del harness `harness@federicode` (`format.md` + el plugin) — y **no se redefine acá**. Este archivo guarda solo **lo particular** de este trabajo. Manténgase corto: cada token aquí se paga siempre.
+> Se carga al trabajar en este workspace. El **formato de trabajo** (roles, loop, anatomía, reglas) es global — lo trae el plugin `harness@federicode`; el marco completo se carga con **`/harness:format`** y **no se redefine acá**. Este archivo guarda solo **lo particular** de este trabajo. Manténgase corto.
+>
+> **El formato en una línea** (detalle en `/harness:format`): se abre la raíz del workspace y se edita solo bajo ella (scope estricto); se resuelve simple, no robusto; ninguna task se construye si no rastrea a un problema (`fundamentals/` o el norte de `business/`); ningún `git commit` sin el Leader.
 
 ## Qué es
 

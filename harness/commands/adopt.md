@@ -3,13 +3,15 @@ description: Sembrar este workspace con el harness federicode (proyecto nuevo o 
 argument-hint: "[nombre del trabajo, opcional]"
 ---
 
-Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz de este trabajo). El formato de trabajo es global — vive en `${CLAUDE_PLUGIN_ROOT}/format.md` (que el stub `trabajos/CLAUDE.md` importa) y en este plugin — así que acá solo se crea **lo particular**: la anatomía de memoria y los alineadores. Los templates viven en `${CLAUDE_PLUGIN_ROOT}/templates/`.
+Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz de este trabajo). El formato de trabajo es global — vive en el plugin — así que acá solo se crea **lo particular**: la anatomía de memoria y los alineadores. Los templates viven en `${CLAUDE_PLUGIN_ROOT}/templates/`.
+
+**Paso 0 — cargá el formato.** Antes de tocar nada, leé `${CLAUDE_PLUGIN_ROOT}/format.md` **entero** (equivale a `/harness:format`): es el marco que vas a materializar. No adoptes a ciegas. Con eso en contexto, seguí con el diagnóstico.
 
 > **Regla de oro: transformá, no destruyas.** En un workspace con trayectoria, todo lo que tiene historia (briefs, docs, decisiones, standards, mapas) es **memoria del proyecto**: se reubica o se transforma a la anatomía nueva — mecánicamente, sin reescribirlo ni reinterpretarlo. Lo **único** que se elimina es lo que duplica el *formato de trabajo* (roles/agents, commands, skills de formato, templates locales): eso lo reemplaza el plugin. Ante la duda entre particular y formato: **conservá y anotá** en el reporte.
 
 ## 1. Diagnosticá la instancia
 
-- **A. Workspace nuevo** (sin código, sin `.claude/`): siembra pura desde templates. Pasos 2 y 4.
+- **A. Workspace vacío o nuevo** (sin código, sin `.claude/`): siembra pura desde templates → el **monorepo mínimo viable**: `business/` + `design-system/` (los aligners) + `CLAUDE.md` raíz + `.claude/settings.json` + `git init`. **Cero solutions todavía** — el Architect decide cuáles arrancar desde `business/`. Pasos 2 y 4.
 - **B. Workspace con trayectoria pre-harness** (código + `.claude/` en cualquier versión vieja del formato — `features/`, `roles/`, `standards/`, `ideas.md`, agents/commands locales): **transformación**. Pasos 2, 3 y 4. Nada de la historia se pierde.
 - **C. Workspace parcialmente adoptado** (ya tiene la anatomía, corrida anterior incompleta): sé **idempotente** — completá solo lo que falte (fundamentals, grafo, settings), no re-siembres ni dupliques lo que ya está.
 
@@ -20,7 +22,10 @@ Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz
 - Por cada **solution** existente o justificada (web, app, backoffice, backend…), sembrá su `.claude/` y el `.graphifyignore` de su raíz desde `templates/solution/`.
 - Copiá `templates/settings/settings.json` al `.claude/settings.json` de la raíz del workspace (o fusionalo si ya existe): trae los permisos del loop, **todos portables — sin un solo path absoluto de máquina**. `Edit(/**)` ancla en la raíz del workspace (edición libre en el scope), `Read(~/.claude/plugins/**)` auto-permite leer la definición del plugin desde el cache (los roles leen su `agents/*.md` sin pedir permiso, en cualquier máquina y cualquier versión instalada), `Edit(~/.claude/plugins/**)` denegado (no se edita el cache), shell y commit con confirmación. El marketplace apunta al repo remoto (`source: github`, `repo: Federicogimenez/claude`) y el plugin queda habilitado (`enabledPlugins`). Si fusionás sobre un settings viejo, **sacá los `allow` de `Edit`/`Write`/`MultiEdit`/`NotebookEdit` sin path** (habilitan el tool en todo el filesystem y perforan el scope) **y cualquier path absoluto de máquina heredado** (`//c/Users/…`, o un marketplace con `source: directory`): se reemplazan por las formas relativas de arriba.
 - Agregá `.claude/settings.local.json` al `.gitignore` del workspace: es el archivo local por-máquina de Claude Code, no se versiona (si ya quedó trackeado en una corrida vieja, `git rm --cached` sin borrarlo).
-- **Topología git:** el workspace es **un solo repo** (monorepo de sub-proyectos) con raíz en la carpeta del trabajo. Si no está inicializado, `git init` en la raíz; no se crean repos por sub-proyecto.
+- **Topología git — default monorepo, poly-repo opt-in:**
+  - **Monorepo (default recomendado):** el workspace es **un solo repo** con raíz en la carpeta del trabajo. Si no está inicializado, `git init` en la raíz. El `.claude/settings.json`, el `.gitignore` y el **wrapper post-commit** de graphify (paso 4) viven en esa raíz y valen para todos los sub-proyectos. Los aligners (`business/`, `design-system/`) quedan bajo la misma raíz → visibles gratis; por eso es el default.
+  - **Poly-repo (opt-in, solo si el monorepo no encaja** — deploy independiente, equipos separados, exigencia del cliente): cada solution que lo justifique lleva su **propio `.git`** (`git init` en su raíz), su propio `.claude/settings.json` (el **mismo template portable, sin cambios** — `Edit(/**)` ancla en la raíz de ese repo), y el **hook nativo** de graphify (`graphify hook install` — válido acá porque 1 repo = 1 proyecto, en vez del wrapper monorepo del paso 4). El Leader **commitea por repo afectado** (calza con *cross-project = una task por proyecto*). Costo a cubrir: una sesión abierta en un sub-repo no ve los aligners → dale lectura con `additionalDirectories` (o `--add-dir`) apuntando a `business/` y `design-system/`.
+  - En ambos casos, **registrá la topología elegida en el `CLAUDE.md` del workspace** (sección *Particulares*), para que quede explícita.
 
 ## 3. Transformá lo viejo (solo instancia B)
 

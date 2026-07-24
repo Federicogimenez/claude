@@ -4,6 +4,30 @@ Un **formato de trabajo** para construir software con Claude Code — empaquetad
 
 ---
 
+## Inicio rápido
+
+### Una vez por máquina
+
+Necesitás [Claude Code](https://code.claude.com/docs/en/setup) instalado y logueado (`claude` → login con tu cuenta Claude.ai). Después, en una terminal:
+
+```
+claude plugin marketplace add Federicogimenez/claude   # registra el marketplace
+claude plugin install harness@federicode               # instala el plugin en tu cache de usuario
+uv tool install graphifyy                              # dependencia externa: el grafo de la memoria
+```
+
+El plugin queda en `~/.claude/plugins` y sirve para **todos** tus workspaces — no se instala por proyecto. El repo es **público**: sin credenciales.
+
+### Inicializar el harness en un proyecto
+
+1. **Abrí la raíz del proyecto en tu IDE** (la carpeta del trabajo). La primera vez, aceptá el diálogo de confianza de Claude Code (**"Yes, I trust this folder"**) — activa los permisos del loop; sin eso, todo pide permiso.
+2. **Corré `/harness:adopt`.** Un solo comando: **carga el formato completo** (equivale a `/harness:format`) y después **siembra o migra** la anatomía del workspace (business/design-system/solutions, memoria, settings portable, hook de Graphify). Deja el árbol listo para que un Architect complete definiciones y un Leader cierre — no commitea.
+3. **A trabajar:** `/harness:architect` arranca el loop.
+
+> **¿Solo querés entender el formato sin inicializar nada?** Corré **`/harness:format`** — carga el spec completo (roles, loop, anatomía, reglas) sin tocar el proyecto.
+
+---
+
 ## Qué es y qué resuelve
 
 Un ejecutor de IA es capaz de hacer casi todo, y por eso **falla de formas predecibles**: sobre-ingeniería, perder el *por qué*, desviarse del problema original, tocar cosas fuera de alcance, exigir que le re-expliques todo cada sesión. **Cada definición del formato es un contrapeso a uno de esos modos de falla.** No es burocracia: es la mínima estructura que hace repetible y coherente trabajar con IA entre muchos proyectos.
@@ -34,7 +58,7 @@ Cada gate resuelve algo: el handoff mantiene al Dev enfocado (no explora ni adiv
 
 ### La anatomía del workspace
 
-Cada trabajo es un monorepo con tres clases de sub-proyecto, sembradas desde material crudo (`resources/`):
+Cada trabajo agrupa tres clases de sub-proyecto (por default en un monorepo), sembradas desde material crudo (`resources/`):
 
 - **`business/`** — autoridad de integración: qué sub-proyectos existen, qué expone/consume cada uno, qué decisiones de negocio condicionan el diseño.
 - **`design-system/`** — el lenguaje visual que alinea todo lo visual.
@@ -74,9 +98,9 @@ El Dev **no** consulta map ni grafo — son herramientas de comprensión del Arc
 |---|---|
 | Roles: `agents/` (Architect · Dev · Leader) | `CLAUDE.md` raíz del workspace (sub-proyectos, estado, quirks) |
 | Comandos: `/harness:architect` · `/harness:dev` · `/harness:leader` · `/harness:adopt` | `business/` y `design-system/` (definiciones + `resources/`) |
-| Skills: `implement`, `test` | `fundamentals/`, grafo Graphify (`graphify-out/`), `map.md` (capa curada + *Evolución*), `tasks/` de cada solution |
+| Skills: `implement`, `test`, `format` | `fundamentals/`, grafo Graphify (`graphify-out/`), `map.md` (capa curada + *Evolución*), `tasks/` de cada solution |
 | Templates: workspace, solution, shared, task, settings | `.claude/settings.json` de cada repo (habilita el plugin + permisos) |
-| El loop y las reglas → [`harness/format.md`](harness/format.md) | El código de cada solución |
+| El loop y las reglas → [`harness/format.md`](harness/format.md), que se carga con `/harness:format` | El código de cada solución |
 
 > **Regla de oro:** una mejora al formato se hace **acá** y vale para todos. Los particulares van al `CLAUDE.md`/`.claude/` del workspace, **nunca como fork local del harness**.
 
@@ -92,39 +116,25 @@ claude/
     ├── format.md      el formato de trabajo (loop, roles, reglas)
     ├── agents/        architect.md · dev.md · leader.md
     ├── commands/      architect.md · dev.md · leader.md · adopt.md
-    ├── skills/        implement/ · test/
+    ├── skills/        implement/ · test/ · format/
     └── templates/     workspace/ · solution/ · shared/ · task/ · settings/
 ```
 
-Se carga por **dos vías**:
+Todo se entrega por el **plugin** (marketplace remoto → cache), sin clone:
 
-1. **El plugin** (marketplace remoto → cache): trae **roles, comandos, skills y templates**, con comandos namespaced `/harness:*`. Es lo que instalás una vez por máquina.
-2. **`format.md`** (las reglas ambientales de toda sesión): **no lo carga el plugin**. Lo importa un stub `CLAUDE.md` — el que agrupa tus trabajos — por ruta (`@claude/harness/format.md`), y así se hereda en toda sesión abierta debajo. Por eso `format.md` vive en `harness/` pero **no** es un directorio del plugin: es el doc del formato, versionado junto a los roles que lo implementan. Es la **única pieza que necesita el repo presente localmente** (el stub apunta a un archivo, no al cache del plugin).
+- **Roles, comandos, skills y templates** — componentes estándar del plugin, con comandos namespaced `/harness:*`. Se instalan una vez por máquina.
+- **`format.md`** — el spec completo del formato. Un plugin **no puede** inyectar un CLAUDE.md ambiental ([es explícito en la doc](https://code.claude.com/docs/en/plugins-reference): los plugins aportan contexto por skills/agents/hooks), así que `format.md` se carga **on-demand** con **`/harness:format`** (skill que lo lee desde el cache del plugin) o lo leen los roles desde `${CLAUDE_PLUGIN_ROOT}/format.md`. **No requiere clonar el harness.**
+- **Orientación mínima por workspace** — `/harness:adopt` siembra en el `CLAUDE.md` de cada workspace las reglas no-negociables (scope, simplicidad, problema-primero, gate del Leader) y el puntero a `/harness:format`. Vive en el repo del workspace → siempre presente, sin clone del harness.
+
+Así, instalar el plugin en cualquier máquina alcanza para que todo funcione; el checkout local solo lo necesita quien **mantiene** el harness.
 
 ---
 
-## Instalación y consumo del plugin
+## Consumo del plugin — detalle y reinstalación
 
-### Máquina nueva — paso a paso (primera vez con Claude Code)
+El *Inicio rápido* de arriba alcanza para arrancar. Esta sección es el detalle: cómo se consume el plugin y cómo reinstalarlo desde cero.
 
-**1. Instalá Claude Code y logueate.** Instalá la CLI o la extensión de VSCode/JetBrains (ver la [doc oficial](https://code.claude.com/docs/en/setup)). Corré `claude` (o abrí la extensión): la primera vez abre el navegador para loguearte con tu cuenta de Claude.ai (Pro/Max/Team). Cuando ves `Login successful`, listo.
-
-**2. Instalá el plugin — una vez por máquina.** En una terminal:
-
-```
-claude plugin marketplace add Federicogimenez/claude
-claude plugin install harness@federicode
-```
-
-Queda en el **cache de usuario** (`~/.claude/plugins`) y vale para **todos** tus workspaces — no se instala por proyecto. Con eso los comandos `/harness:*` y los subagentes `architect`/`dev`/`leader` quedan disponibles en toda sesión.
-
-> El repo es **público**: no hace falta ninguna credencial. (Si algún día pasa a privado, configurás git auth una vez con `gh auth setup-git`.)
-
-**3. Instalá Graphify — una vez por máquina.** `uv tool install graphifyy` (necesitás [`uv`](https://docs.astral.sh/uv/)). Ver *Dependencia externa*.
-
-**4. Abrí un workspace y aceptá la confianza.** Abrí la **raíz del workspace** donde vas a trabajar. La primera vez, Claude Code muestra el diálogo de confianza: aceptá **"Yes, I trust this folder"**. Recién ahí se activan los permisos del loop (edición libre en el scope, lectura del plugin); **sin aceptarlo, cada edit y cada lectura del plugin pide permiso** y parece que la sesión "ve toda la máquina". Si el workspace todavía no tiene la anatomía del harness, corré `/harness:adopt`.
-
-**5. A trabajar.** `/harness:architect` arranca el loop.
+> **Confianza del workspace:** los permisos del loop (edición libre en el scope, lectura del plugin) solo se activan al aceptar el diálogo **"Yes, I trust this folder"**. Sin aceptarlo, cada edit y cada lectura del plugin pide permiso y parece que la sesión "ve toda la máquina". Se verifica en `~/.claude.json` → `projects[<raíz>].hasTrustDialogAccepted`.
 
 ### Cómo se consume — y reinstalar desde cero
 
@@ -143,7 +153,7 @@ claude plugin install harness@federicode
 
 El `add` re-clona desde GitHub y el `install` reconstruye el cache. Verificás con `claude plugin marketplace list` o con `/plugin` dentro de una sesión.
 
-> Borrar solo la carpeta local del repo **no afecta** a las sesiones que ya consumen el plugin: leen del cache, no de tu checkout. El checkout local solo importa para el stub de `format.md`, para **mantener** el harness, o para probar cambios con `--plugin-dir`.
+> Borrar solo la carpeta local del repo **no afecta** a las sesiones que ya consumen el plugin: leen del cache, no de tu checkout. El checkout local solo importa para **mantener** el harness (editar y publicar), o para probar cambios con `--plugin-dir`.
 
 **Actualizar:** cada commit pusheado es una versión nueva (por SHA). `claude plugin marketplace update federicode` trae la última — o se baja sola en el auto-update en background al abrir sesiones.
 
@@ -166,6 +176,7 @@ Una vez adoptado, el ciclo diario:
 - **`/harness:architect`** *(rol por defecto)* — entrás a diseñar. Entiende la raíz, investiga, pesa la task y arma el handoff del Dev. Conduce hasta el QA y **para**.
 - **`/harness:dev`** (o subagente `dev`) — ejecuta una skill + un handoff, sin decidir diseño. Lo invoca el Architect (implementar) y el Leader (pruebas).
 - **`/harness:leader`** *(chat dedicado)* — lo disparás vos para commitear: evalúa coherencia, mantiene `map.md`/integración, corre pruebas vía Dev y **commitea**. Es el gate.
+- **`/harness:format`** — carga el spec completo del formato (roles, loop, anatomía, reglas) desde el plugin. Útil para orientarte en un workspace o si venís de cero.
 
 El humano hace el **QA visual** entre el Architect y el Leader, y siempre tiene la última palabra.
 
@@ -181,7 +192,9 @@ El **grafo** de la memoria por solution lo genera Graphify, una herramienta exte
 
 ## Topología git y modelo de sesión
 
-Cada workspace es **un solo repo git** (monorepo de sub-proyectos): el Leader commitea en la raíz, y su `.claude/settings.json` vale para todos los sub-proyectos. El `graphify-out/` de cada solution se regenera local y va al `.gitignore`. Este repo `claude/` (el harness) lleva su **propio** repo, separado de los workspaces.
+Por **default, cada workspace es un solo repo git** (monorepo de sub-proyectos): el Leader commitea en la raíz, y su `.claude/settings.json` vale para todos los sub-proyectos. Los aligners (`business/`, `design-system/`) quedan bajo la misma raíz → visibles gratis; por eso es la topología recomendada. El `graphify-out/` de cada solution se regenera local y va al `.gitignore`. Este repo `claude/` (el harness) lleva su **propio** repo, separado de los workspaces.
+
+**Variante poly-repo** (opt-in, cuando el monorepo no encaja — deploy independiente, equipos separados): cada solution que lo justifique lleva su propio `.git` + `.claude/settings.json` (el mismo template portable) + hook nativo de graphify (1 repo = 1 proyecto), el Leader commitea por repo afectado, y los aligners se comparten vía `additionalDirectories`. `/harness:adopt` documenta la adaptación; el `CLAUDE.md` del workspace registra qué topología quedó.
 
 Se trabaja **abriendo la raíz de cada workspace**, nunca la carpeta que los agrupa — el scope de la sesión es estricto a ese workspace. Para **mantener el harness**, la sesión se abre en la **raíz de este repo**. El `settings.json` lo hace cumplir: edita solo bajo la raíz del workspace (`Edit(/**)`) y deniega editar el cache del plugin (`Edit(~/.claude/plugins/**)`) — un `deny` gana sobre cualquier `allow`, así que una sesión de workspace no toca el harness ni por accidente.
 
@@ -205,7 +218,6 @@ Si querés partir de este harness para armar el tuyo:
 2. **`.claude-plugin/marketplace.json`** — cambiá `name` (el nombre del marketplace, hoy `federicode`) y `owner`. Ese `name` es con el que se instala: `<plugin>@<name>`.
 3. **`harness/.claude-plugin/plugin.json`** — actualizá `author`. El `name` del plugin (`harness`) podés dejarlo o cambiarlo; si lo cambiás, cambia el namespace de los comandos (`/tu-plugin:*`).
 4. **`harness/templates/settings/settings.json`** — apuntá `extraKnownMarketplaces.<tu-marketplace>.source.repo` a `tu-usuario/tu-repo`, y `enabledPlugins` a `<plugin>@<tu-marketplace>`. (Los permisos `Edit(/**)` / `Read(~/.claude/plugins/**)` son portables — no los toques.)
-5. **El stub de `format.md`** — el `CLAUDE.md` que agrupa tus trabajos importa `format.md` por ruta. Ajustá la ruta a donde clones tu harness, y mantené ahí un checkout local (es la pieza que no llega por el plugin).
-6. **Publicá** con `git push` y consumí como en *Instalación*, con tu repo y tu marketplace.
+5. **Publicá** con `git push` y consumí como en *Instalación*, con tu repo y tu marketplace. El formato viaja en el plugin (`/harness:format` + los roles) — no hay stub ni clone que configurar en las máquinas que lo consumen.
 
 Revisá `format.md` y los `agents/` por menciones de marca ("federicode") si querés renombrar. No declares `version` — dejá que el SHA versione.

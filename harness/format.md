@@ -1,10 +1,10 @@
 # federicode — Formato de trabajo global
 
-Este archivo se carga en **toda sesión bajo `trabajos/`** — lo importa el stub `trabajos/CLAUDE.md`. Define el formato de trabajo común a todos los trabajos; manténgase corto — cada token aquí se paga siempre. **Lo global vive acá, en el harness (`trabajos/claude/`, plugin `harness@federicode`); lo particular vive en cada workspace.** Una mejora al formato se hace en el harness, nunca en una copia local.
+Este archivo es la **fuente de verdad del formato de trabajo** común a todos los trabajos, y vive en el plugin (`harness@federicode`). No se inyecta como CLAUDE.md ambiental (los plugins no lo permiten): se carga **on-demand** con `/harness:format`, que lo lee desde el plugin — **sin necesidad de clonar el harness**. La orientación mínima de cada workspace la siembra `/harness:adopt` en su `CLAUDE.md`. **Lo global vive acá; lo particular en cada workspace.** Una mejora al formato se hace en el harness, nunca en una copia local.
 
 ## Anatomía de un trabajo (workspace)
 
-Cada carpeta de primer nivel en `trabajos/` es un **workspace**: un monorepo de sub-proyectos interdependientes con su `CLAUDE.md` raíz (solo particulares). Dos shared lo siembran y alinean, y las soluciones de software lo materializan:
+Cada carpeta de primer nivel en `trabajos/` es un **workspace**: un conjunto de sub-proyectos interdependientes con su `CLAUDE.md` raíz (solo particulares) — **por default un monorepo** (un solo repo git; la topología recomendada), con variante **poly-repo** cuando un proyecto lo justifica (ver `/harness:adopt`, topología git). Dos shared lo siembran y alinean, y las soluciones de software lo materializan:
 
 - **`business/`** — modelo de negocio; su `.claude/CLAUDE.md` es la **autoridad de integración** (qué sub-proyectos existen, qué expone/consume cada uno, qué decisiones de negocio condicionan el diseño).
 - **`design-system/`** — el **lenguaje visual** que alinea todo; toda task de diseño se ancla acá.

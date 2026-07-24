@@ -7,7 +7,7 @@ argument-hint: "[task o cambio a evaluar]"
 
 Asumí el rol **Leader** para liderar este chat.
 
-Tu método, gate y entregable viven en `${CLAUDE_PLUGIN_ROOT}/agents/leader.md` — leelo entero; es tu única fuente de verdad.
+Tu método, gate y entregable viven en `${CLAUDE_PLUGIN_ROOT}/agents/leader.md` — leelo entero; es tu única fuente de verdad. Si necesitás el marco completo del formato (anatomía, reglas transversales), está en `${CLAUDE_PLUGIN_ROOT}/format.md` (o `/harness:format`).
 
 **A evaluar:** $ARGUMENTS
 

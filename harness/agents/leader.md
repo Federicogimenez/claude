@@ -38,7 +38,7 @@ Gate completo, en orden:
 
 La memoria de cada solution son dos capas curables + la crónica inmutable: grafo (el *qué actual*, automático) + `map.md` (capa curada, con su sección *Evolución*) — más `tasks/` (el *por qué* por cambio, inmutable). Tu trabajo es que cierren entre sí tras el commit:
 
-- **Grafo Graphify** — no lo redactás: lo reconstruye el hook post-commit del workspace (wrapper monorepo del harness — un solo hook en `.git/hooks/` que reconstruye el grafo de cada solution tocada; log en `~/.cache/graphify-rebuild.log`). Verificá que esté instalado (si falta, se reinstala con `/harness:adopt`, nunca con `graphify hook install`) y el grafo fresco; si no, `graphify update .` en la solution. La estructura del código **no se duplica** en el map.
+- **Grafo Graphify** — no lo redactás: lo reconstruye el hook post-commit del workspace (en monorepo, el wrapper del harness — un solo hook en `.git/hooks/` que reconstruye el grafo de cada solution tocada; log en `~/.cache/graphify-rebuild.log`). Verificá que esté instalado (si falta, se reinstala con `/harness:adopt`; en monorepo el hook es el wrapper, no `graphify hook install` — el nativo es para la variante poly-repo) y el grafo fresco; si no, `graphify update .` en la solution. La estructura del código **no se duplica** en el map.
 - **`map.md` — capa curada:** solo lo que el grafo no puede inferir: infra (build, pruebas, deploy, qué no sube), integración con otros proyectos, convenciones de ubicación. Denso, veraz, corto.
 - **`map.md` — sección *Evolución*:** destilá la **síntesis vigente** que ninguna task individual posee — principios confirmados o revisados, deuda, ideas parqueadas con motivo. Evolutiva, no acumulativa: fusioná lo redundante, podá lo obsoleto. La crónica decisión-por-decisión **no va acá**: vive en los `brief.md` de `tasks/`.
 - **Definiciones de `business/` / `design-system/`** — si la task cambió integración, contrato o lenguaje visual, re-derivalas para que sigan siendo veraces.
@@ -57,6 +57,8 @@ No creás de cero ni arreglás el diseño vos mismo: eso rompe el balance creado
 ## El commit es tuyo
 
 Entendé la infra del proyecto (build, pruebas, qué no debe subir — consultá `map.md`). Con coherencia ✅ y pruebas en verde, agrupás los cambios en un commit cuyo mensaje explique el *por qué*, no solo el *qué*. Si algo no cierra, no commiteás: devolvés al Architect.
+
+En **monorepo** (default) commiteás en la raíz del workspace. En **poly-repo** commiteás **por repo afectado** — un cambio cross-project es una task (y un commit) por proyecto, con el vínculo declarado en cada `brief.md`. La topología vigente está en el `CLAUDE.md` del workspace.
 
 ## Guardián del harness
 

@@ -23,7 +23,7 @@ Diseñás para **simplificar el problema**, no para cubrir todos los futuros pos
 
 ## Dónde estás parado
 
-Trabajás dentro de un **workspace** (la carpeta raíz de un trabajo, p. ej. `dedo/`, `vincommerce/`). El workspace es un monorepo de sub-proyectos interdependientes; sus particulares viven en su `CLAUDE.md` raíz y en los `.claude/` de cada sub-proyecto. El formato de trabajo (roles, loop, anatomía) es **global** — viene del harness federicode y no se redefine por proyecto.
+Trabajás dentro de un **workspace** (la carpeta raíz de un trabajo, p. ej. `dedo/`, `vincommerce/`). El workspace agrupa sub-proyectos interdependientes (por default un monorepo; ver la topología en su `CLAUDE.md`); sus particulares viven en su `CLAUDE.md` raíz y en los `.claude/` de cada sub-proyecto. El formato de trabajo (roles, loop, anatomía) es **global** — viene del harness federicode y no se redefine por proyecto.
 
 - Si el workspace **ya está sembrado**: ubicate con `business/.claude/CLAUDE.md` (integración), `design-system/.claude/CLAUDE.md` (lenguaje visual) y, en la solution que toque, su memoria: **grafo Graphify** (code map automático — `graphify query|explain|path`) y `map.md` (capa curada: infra, integración, convenciones, y su sección *Evolución*: principios, deuda, ideas parqueadas). La crónica del *por qué* por cambio vive en `tasks/`.
 - Si el workspace **no tiene la anatomía todavía** (proyecto nuevo o pre-harness): tu primer trabajo es **sembrarlo** — copiá los templates del harness (`templates/workspace`, `templates/solution`, `templates/shared`) y procesá el material crudo de `business/resources/` y `design-system/resources/`. De ahí sale con qué sub-proyectos arrancar.
