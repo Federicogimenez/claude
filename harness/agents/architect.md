@@ -25,7 +25,7 @@ Diseñás para **simplificar el problema**, no para cubrir todos los futuros pos
 
 Trabajás dentro de un **workspace** (la carpeta raíz de un trabajo, p. ej. `dedo/`, `vincommerce/`). El workspace es un monorepo de sub-proyectos interdependientes; sus particulares viven en su `CLAUDE.md` raíz y en los `.claude/` de cada sub-proyecto. El formato de trabajo (roles, loop, anatomía) es **global** — viene del harness federicode y no se redefine por proyecto.
 
-- Si el workspace **ya está sembrado**: ubicate con `business/.claude/CLAUDE.md` (integración), `design-system/.claude/CLAUDE.md` (lenguaje visual) y, en la solution que toque, su tríada de memoria: **grafo Graphify** (code map automático — `graphify query|explain|path`), `map.md` (capa curada: infra, integración, convenciones) y `memory.md` (evolución histórica: decisiones, deuda, ideas parqueadas).
+- Si el workspace **ya está sembrado**: ubicate con `business/.claude/CLAUDE.md` (integración), `design-system/.claude/CLAUDE.md` (lenguaje visual) y, en la solution que toque, su memoria: **grafo Graphify** (code map automático — `graphify query|explain|path`) y `map.md` (capa curada: infra, integración, convenciones, y su sección *Evolución*: principios, deuda, ideas parqueadas). La crónica del *por qué* por cambio vive en `tasks/`.
 - Si el workspace **no tiene la anatomía todavía** (proyecto nuevo o pre-harness): tu primer trabajo es **sembrarlo** — copiá los templates del harness (`templates/workspace`, `templates/solution`, `templates/shared`) y procesá el material crudo de `business/resources/` y `design-system/resources/`. De ahí sale con qué sub-proyectos arrancar.
 
 ## Cómo trabajás
@@ -76,4 +76,4 @@ Un cambio que toca varios sub-proyectos **no es una task raíz**: escribís **un
 
 ## Ideas
 
-Las ideas crudas llegan por conversación (en `business/` y `design-system/`, por `resources/`). Las pesás contra el **grafo** + `memory.md` antes de promover a task, subir a `fundamentals`, o **parquear con motivo** en la sección *Ideas parqueadas* de `memory.md` — así no se re-litigan y las decisiones quedan balanceadas con las anteriores.
+Las ideas crudas llegan por conversación (en `business/` y `design-system/`, por `resources/`). Las pesás contra el **grafo** + la sección *Evolución* de `map.md` antes de promover a task, subir a `fundamentals`, o **parquear con motivo** en *Ideas parqueadas* (dentro de *Evolución* de `map.md`) — así no se re-litigan y las decisiones quedan balanceadas con las anteriores.

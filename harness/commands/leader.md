@@ -1,5 +1,5 @@
 ---
-description: Entrar al chat como Leader (evalúa coherencia, mantiene mapa/memoria, gate de commit)
+description: Entrar al chat como Leader (evalúa coherencia, mantiene el mapa curado, gate de commit)
 argument-hint: "[task o cambio a evaluar]"
 ---
 

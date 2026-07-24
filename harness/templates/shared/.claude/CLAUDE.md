@@ -9,8 +9,7 @@ Un proyecto **shared**: no tiene objetivo de negocio propio, **sirve a los demá
 🌱 Bootstrap.
 
 ## Memoria del proyecto
-- Mapa de lo compartido y cómo se consume → [map.md](map.md)
-- Evolución histórica (decisiones, ideas parqueadas) → [memory.md](memory.md)
-- Historial de tasks → [tasks/](tasks/)
+- Mapa de lo compartido y cómo se consume + evolución (principios, ideas parqueadas) → [map.md](map.md)
+- Historial de tasks — la crónica del *por qué* por cambio → [tasks/](tasks/)
 
-> Su intake es la carpeta `resources/` (material crudo que carga el humano; el Architect lo procesa en las definiciones de este archivo). Las ideas descartadas o pospuestas quedan en `memory.md` con motivo.
+> Su intake es la carpeta `resources/` (material crudo que carga el humano; el Architect lo procesa en las definiciones de este archivo). Las ideas descartadas o pospuestas quedan en la sección *Evolución* de `map.md` con motivo.

@@ -14,8 +14,7 @@
 
 ## Gate del Leader (lo dispara el humano, antes de commit)
 - [ ] Coherencia raíz→implementación verificada (proporcional al peso)
-- [ ] `map.md` actualizado
-- [ ] `memory.md` actualizado
+- [ ] `map.md` actualizado (capa curada + *Evolución* si aplica)
 - [ ] Veredicto de refinamiento registrado en `doc/`
 
 ## Estado

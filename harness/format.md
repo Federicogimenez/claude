@@ -8,7 +8,7 @@ Cada carpeta de primer nivel en `trabajos/` es un **workspace**: un monorepo de 
 
 - **`business/`** — modelo de negocio; su `.claude/CLAUDE.md` es la **autoridad de integración** (qué sub-proyectos existen, qué expone/consume cada uno, qué decisiones de negocio condicionan el diseño).
 - **`design-system/`** — el **lenguaje visual** que alinea todo; toda task de diseño se ancla acá.
-- **Solutions** (`web/`, `app/`, `backoffice/`, `backend/`…): skeleton completo `fundamentals` + tríada de memoria + `tasks`. Se arranca con las que `business/` justifique.
+- **Solutions** (`web/`, `app/`, `backoffice/`, `backend/`…): skeleton completo `fundamentals` + memoria (grafo + `map.md`) + `tasks`. Se arranca con las que `business/` justifique.
 
 `business/` y `design-system/` se siembran desde su carpeta **`resources/`** (material crudo que carga el humano; el Architect lo procesa en definiciones, el Leader las mantiene veraces).
 
@@ -32,7 +32,7 @@ Architect y Leader mantienen contexto y decisiones independientes: por eso se eq
 2. **Dev** ejecuta sobre la skill + el handoff, con contexto solo de ejecución, todos los edits de corrido.
 3. **Vos hacés QA visual.** El Architect surfacea el resultado y **para acá** — el Leader no se encadena.
 4. Ajustes del QA → **corrección por delta al mismo Dev** (sin reboot) → volvés a QA, hasta tu OK.
-5. **Vos disparás al Leader** cuando decidís commitear: gate de coherencia proporcional al peso + pruebas (vía Dev, skill `test`) + commit + actualiza `map.md` y `memory.md`.
+5. **Vos disparás al Leader** cuando decidís commitear: gate de coherencia proporcional al peso + pruebas (vía Dev, skill `test`) + commit + actualiza `map.md` (capa curada + su *Evolución*).
 
 **Gate obligatorio:** ningún `git commit` sin el Leader. Vos siempre tenés la última palabra — el Leader propone, no impone.
 
@@ -42,6 +42,6 @@ Architect y Leader mantienen contexto y decisiones independientes: por eso se eq
 - **Sesgo a la simplicidad:** resolver simple, no robusto. Sobre-ingeniería es deuda; robustez solo cuando es muy necesaria y justificada.
 - **Cross-project:** un cambio que toca varios sub-proyectos = una task por proyecto, con vínculo declarado en cada `brief.md`; la integración de fondo queda en `business/.claude/CLAUDE.md`.
 - **Toda solución parte de un problema:** si una task no rastrea a `fundamentals/` (o al norte de `business/`), no se construye.
-- **Tríada de memoria por solution:** **grafo Graphify** (code map automático — estructura y conexiones, se reconstruye post-commit; se consulta con `graphify query|explain|path`, uno por solution) + `map.md` (capa curada: infra, integración, convenciones — solo lo que el grafo no infiere) + `memory.md` (evolución histórica: decisiones, principios, deuda, ideas parqueadas con motivo). Más `tasks/NNNN-slug/` (historial inmutable: `brief.md` + `tasks.md` + `doc/`). El Dev no consulta map ni grafo — recibe punteros destilados en el handoff.
+- **Memoria por solution:** **grafo Graphify** (code map automático — estructura y conexiones, se reconstruye post-commit; se consulta con `graphify query|explain|path`, uno por solution) + `map.md` (capa curada: infra, integración, convenciones que el grafo no infiere, y al final una sección *Evolución* con la síntesis vigente — principios, deuda, ideas parqueadas con motivo — que ninguna task individual posee). Más `tasks/NNNN-slug/` (historial **inmutable**: `brief.md` + `tasks.md` + `doc/` — la crónica del *por qué* por cambio). El Dev no consulta map ni grafo — recibe punteros destilados en el handoff.
 - **Skills:** internas (`implement`, `test` — solo el enfoque; la disciplina vive en la persona del Dev), instaladas (marketplace de terceros) y bundled (ej. `claude-api`, fuente autoritativa de modelos — se invoca, no se copia).
 - **Templates:** workspace, solution, shared, task y settings viven en el harness (`trabajos/claude/harness/templates/`). Task nueva = copiar `templates/task/` y numerar secuencial (`0001-`, `0002-`, …).

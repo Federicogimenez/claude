@@ -1,7 +1,7 @@
 {
   "permissions": {
     "deny": [
-      "Edit(//c/Users/Usuario/Documents/federicode/trabajos/claude/**)"
+      "Edit(~/.claude/plugins/**)"
     ],
     "ask": [
       "Bash(git commit:*)",
@@ -9,6 +9,7 @@
     ],
     "allow": [
       "Edit(/**)",
+      "Read(~/.claude/plugins/**)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -18,8 +19,8 @@
   "extraKnownMarketplaces": {
     "federicode": {
       "source": {
-        "source": "directory",
-        "path": "c:/Users/Usuario/Documents/federicode/trabajos/claude"
+        "source": "github",
+        "repo": "Federicogimenez/claude"
       }
     }
   },

@@ -1,6 +1,6 @@
 # Harness federicode
 
-La **única fuente de verdad del formato de trabajo** de todos los trabajos. Es un marketplace local de Claude Code con un plugin (`harness`): se edita **acá, una sola vez**, y todos los proyectos que lo tienen habilitado ven la actualización — nadie mantiene copias.
+La **única fuente de verdad del formato de trabajo** de todos los trabajos. Es un marketplace de Claude Code **hospedado en GitHub** ([`Federicogimenez/claude`](https://github.com/Federicogimenez/claude)) con un plugin (`harness`): se mantiene **acá, una sola vez**, se publica con `git push`, y todos los proyectos que lo tienen habilitado consumen la misma versión publicada — nadie mantiene copias.
 
 ## Qué es global y qué es particular
 
@@ -8,7 +8,7 @@ La **única fuente de verdad del formato de trabajo** de todos los trabajos. Es 
 |---|---|
 | Roles: `agents/` (Architect · Dev · Leader) | `CLAUDE.md` raíz del workspace (sub-proyectos, estado, quirks) |
 | Comandos: `/harness:architect` · `/harness:dev` · `/harness:leader` · `/harness:adopt` | `business/` y `design-system/` (definiciones + `resources/`) |
-| Skills: `implement`, `test` | `fundamentals/`, grafo Graphify (`graphify-out/`), `map.md`, `memory.md`, `tasks/` de cada solution |
+| Skills: `implement`, `test` | `fundamentals/`, grafo Graphify (`graphify-out/`), `map.md` (capa curada + *Evolución*), `tasks/` de cada solution |
 | Templates: workspace, solution, shared, task, settings | `.claude/settings.json` de cada repo (habilita el plugin + permisos) |
 | El loop y las reglas → [`harness/format.md`](harness/format.md) (lo importa el stub `trabajos/CLAUDE.md`, y así se carga en toda sesión bajo `trabajos/`) | El código de cada solución |
 
@@ -30,7 +30,7 @@ claude/
 
 ## Dependencia externa: Graphify
 
-La memoria de cada **solution** es una tríada: **grafo Graphify** (code map automático, se reconstruye post-commit) + `map.md` (capa curada) + `memory.md` (evolución histórica). Graphify es una herramienta externa instalada por máquina (`uv tool install graphifyy`). La siembra por solution la ejecuta `/harness:adopt` (fuente canónica del setup); los comandos de consulta y mantenimiento viven en el `map.md` de cada solution (sección *El grafo*). El grafo cubre **solo el código** de la solution — el `.graphifyignore` del template excluye `.claude/`: es el sobrevuelo optimizado del code base; el detalle vive en la memoria del proyecto.
+La memoria de cada **solution** son dos capas + la crónica inmutable: **grafo Graphify** (code map automático, se reconstruye post-commit) + `map.md` (capa curada: infra, integración, convenciones, y al final una sección *Evolución* con la síntesis vigente — principios, deuda, ideas parqueadas) — más `tasks/` (historial inmutable: la crónica del *por qué* por cambio). Graphify es una herramienta externa instalada por máquina (`uv tool install graphifyy`). La siembra por solution la ejecuta `/harness:adopt` (fuente canónica del setup); los comandos de consulta y mantenimiento viven en el `map.md` de cada solution (sección *El grafo*). El grafo cubre **solo el código** de la solution — el `.graphifyignore` del template excluye `.claude/`: es el sobrevuelo optimizado del code base; el detalle y el porqué viven en el `map.md` y en `tasks/`.
 
 **Mantenimiento post-commit:** el hook nativo (`graphify hook install`) asume un repo por proyecto — en el monorepo del workspace instalaría un solo hook para un solo grafo y dejaría los demás sin mantenimiento. El harness trae un **wrapper monorepo** (`harness/templates/workspace/hooks/post-commit`) que reconstruye el grafo de cada solution tocada por el commit; `/harness:adopt` lo instala en `.git/hooks/post-commit` del workspace.
 
@@ -42,16 +42,57 @@ Cada workspace es **un solo repo git** (monorepo de sub-proyectos): el Leader co
 
 Se trabaja abriendo la **raíz de cada workspace** (ej. `trabajos/dedo/`), nunca `trabajos/` — el scope de la sesión es estricto a ese workspace. `trabajos/CLAUDE.md` se carga igual (los CLAUDE.md se heredan de directorios ancestros) y arrastra por import a `harness/format.md`; los roles/comandos los aporta el plugin. Para **mantener el harness**, la sesión se abre en **`trabajos/claude/`** — su propia raíz, hermana de los workspaces y no su padre.
 
-El scope no es solo prosa: el `settings.json` que `/harness:adopt` deja en cada workspace permite editar únicamente bajo su raíz (`Edit(/**)`) y **deniega** explícitamente `trabajos/claude/**`. Un `deny` gana sobre cualquier `allow`, así que una sesión de workspace no puede tocar el harness ni por accidente ni por insistencia.
+El scope no es solo prosa: el `settings.json` que `/harness:adopt` deja en cada workspace permite editar únicamente bajo su raíz (`Edit(/**)`, que ancla en la raíz del workspace) y **deniega** editar el cache del plugin (`Edit(~/.claude/plugins/**)`). Un `deny` gana sobre cualquier `allow`, así que una sesión de workspace no puede tocar el harness instalado ni por accidente. Todo con rutas relativas (`/…` al workspace, `~/…` al home): **ni un path absoluto de máquina**, para que el mismo settings sirva en cualquier equipo.
 
-## Instalación (una sola vez, a nivel usuario)
+## Máquina nueva — paso a paso (primera vez con Claude Code)
+
+Para alguien que arranca de cero, sin nada instalado:
+
+**1. Instalá Claude Code y logueate.** Instalá la CLI o la extensión de VSCode/JetBrains (ver la [doc oficial de instalación](https://code.claude.com/docs/en/setup)). Abrí una terminal y corré `claude` (o abrí la extensión): la primera vez abre el navegador para loguearte con tu cuenta de Claude.ai (Pro/Max/Team). Cuando ves `Login successful`, listo.
+
+**2. Instalá el plugin del harness — una vez por máquina.** En una terminal:
 
 ```
-/plugin marketplace add c:/Users/Usuario/Documents/federicode/trabajos/claude
-/plugin install harness@federicode
+claude plugin marketplace add Federicogimenez/claude
+claude plugin install harness@federicode
 ```
 
-Con eso los comandos `/harness:*` y los subagentes `architect`/`dev`/`leader` quedan disponibles en **todas** las sesiones. Alternativa por-proyecto (explícita y portable): copiar `harness/templates/settings/settings.json` al `.claude/settings.json` del repo — declara el marketplace (`extraKnownMarketplaces`) y habilita el plugin (`enabledPlugins`), además de traer los permisos del loop.
+El plugin queda en el **cache de usuario** (`~/.claude/plugins`) y vale para **todos** tus workspaces — no se instala por proyecto. Con eso los comandos `/harness:*` y los subagentes `architect`/`dev`/`leader` quedan disponibles en toda sesión.
+
+> El repo es **público**: no hace falta ninguna credencial. (Si algún día pasa a privado, configurás git auth una vez con `gh auth setup-git`.)
+
+**3. Instalá Graphify — una vez por máquina.** La memoria de código de cada solution usa Graphify (ver más abajo): `uv tool install graphifyy`. Necesitás [`uv`](https://docs.astral.sh/uv/) instalado.
+
+**4. Abrí un workspace y aceptá la confianza.** Abrí la **raíz del workspace** donde vas a trabajar. La primera vez, Claude Code muestra el diálogo de confianza: aceptá **"Yes, I trust this folder"**. Recién ahí se activan los permisos del loop (edición libre en el scope, lectura del plugin); **sin aceptarlo, cada edit y cada lectura del plugin pide permiso** y parece que la sesión "ve toda la máquina". Si el workspace todavía no tiene la anatomía del harness, corré `/harness:adopt`.
+
+**5. A trabajar.** `/harness:architect` arranca el loop.
+
+**Actualizar el harness después:** cada commit al repo del harness es una versión nueva (por SHA). Traés la última con `claude plugin marketplace update federicode` en la terminal — o dejás que Claude Code la baje solo en el auto-update en background al abrir sesiones.
+
+## Cómo se consume el plugin — y reinstalar desde cero
+
+El plugin **vive en GitHub**, no en ninguna carpeta local. Consumirlo es un flujo de dos pasos, **independiente de tener el repo clonado en tu disco**:
+
+1. **Registrás el marketplace** — `claude plugin marketplace add Federicogimenez/claude`: Claude Code clona el repo a su estado interno de marketplaces (`~/.claude/plugins/marketplaces/`).
+2. **Instalás el plugin** — `claude plugin install harness@federicode`: copia el plugin al **cache de usuario** (`~/.claude/plugins/cache/<marketplace>/<plugin>/<versión>/`). Desde ahí lo cargan **todas** tus sesiones.
+
+Lo que se ejecuta es la copia del cache; la fuente es el repo en GitHub. No necesitás un checkout local para usar el plugin: el `add` lo trae solo desde el remoto.
+
+**Reinstalar desde cero** — borraste un checkout local, limpiaste el cache, o algo quedó inconsistente. No depende de ningún archivo local; se reconstruye todo desde GitHub:
+
+```
+claude plugin marketplace remove federicode      # quita el registro y desinstala su plugin (si estaba)
+claude plugin marketplace add Federicogimenez/claude
+claude plugin install harness@federicode
+```
+
+El `add` vuelve a clonar desde GitHub y el `install` reconstruye el cache. Para verificar el estado: `claude plugin marketplace list` (marketplaces registrados) o `/plugin` dentro de una sesión (plugins instalados).
+
+> **Borrar solo la carpeta local del repo no afecta a las sesiones que ya consumen el plugin:** ellas leen del cache, no de tu checkout. El checkout local solo importa para **mantener** el harness (editar y publicar con `git push`) o para probar cambios sin publicar (`claude --plugin-dir <ruta-al-plugin>`).
+
+### Alternativa: que el workspace lo pida solo
+
+Si el `.claude/settings.json` del workspace ya trae `extraKnownMarketplaces` (source `github`) + `enabledPlugins` — lo que deja `/harness:adopt` — podés saltarte el **paso 2** manual: al abrir el workspace y aceptar la confianza, Claude Code te ofrece agregar el marketplace e instalar el plugin. Aceptás y queda igual en el cache de usuario, disponible para todos tus workspaces.
 
 ## Adoptar el harness en un trabajo
 
@@ -61,8 +102,7 @@ Dentro del workspace (nuevo o existente): `/harness:adopt`. Siembra la anatomía
 
 - **Una mejora al formato** (roles, loop, templates, skills) se hace acá y vale para todos. Si un workspace necesita algo que el harness no da, primero preguntarse: ¿es una mejora global o un particular? Los particulares van al `CLAUDE.md`/`.claude/` del workspace, nunca como fork del harness.
 - **Guardián:** el rol Leader custodia esta frontera y la config del harness — ver `agents/leader.md`, sección *Guardián del harness*.
-- **Cómo propagan los cambios: editás y reiniciás. Nada más.** Con source `directory`, Claude Code registra el marketplace **en esta carpeta** (`installLocation`) y lee agents, commands, skills y templates de acá, en vivo del working tree. No hay copia intermedia: `~/.claude/plugins/cache/` no existe. Ni `/plugin update`, ni bump de versión, ni commit — el cambio está activo en la próxima sesión que arranque. *(Verificado el 2026-07-22 con un marcador sin commitear en la `description` de una skill: apareció en el system prompt tras reiniciar.)*
-  > El `installPath` bajo `cache/` que figura en `~/.claude/plugins/installed_plugins.json` es contabilidad del install original y apunta a una ruta que no existe. No lo persigas.
-- **El commit es el gate, no el mecanismo.** Como la propagación no lo necesita, es fácil dejar el working tree sucio y perder la trazabilidad del formato — que es todo lo que este repo aporta. Commiteá igual, con el Leader.
-- **No declares `version`** en `plugin.json` ni en la entrada del marketplace. Hoy no cambia nada (no hay caché que versionar), pero el día que este harness se sirva desde un remoto sí aparece la caché versionada, y un `version` fijo **pinea** el plugin: los commits nuevos dejan de propagarse sin que nada avise. Sin el campo, la versión cae al SHA del commit y cada commit es una versión nueva. La doc además desaconseja declararlo en los dos lados, porque el de `plugin.json` gana en silencio.
-- **¿Hace falta remoto en GitHub?** No — el source `directory` alcanza para una máquina, y encima es lo que da la lectura en vivo. Un remoto solo se vuelve necesario para consumir el harness desde **otras máquinas**; ahí sí entra la caché versionada, el `git pull` y el `/plugin update`.
+- **Cómo propagan los cambios (consumidores): commiteás y pusheás.** El harness se sirve desde GitHub, así que el plugin instalado es una **copia del cache versionado** (`~/.claude/plugins/cache/…`), no el working tree vivo. Cada commit pusheado es una versión nueva (por SHA); los workspaces la reciben con `claude plugin marketplace update federicode` o por el auto-update en background al arrancar sesión. **Sin `git push`, el cambio no llega a ninguna máquina.**
+- **Probar cambios sin publicar (mantenedor):** abrí el harness con `claude --plugin-dir ./harness` — carga tu working tree y pisa la versión instalada **solo en esa sesión**, sin commit ni push. Es el reemplazo del viejo modelo "editás y reiniciás" de cuando el source era `directory` local. `/reload-plugins` recarga sin reiniciar.
+- **El commit + push es el gate.** El Leader es el único que commitea; el push publica. Dejar el working tree sucio no propaga nada y pierde la trazabilidad del formato — que es todo lo que este repo aporta.
+- **No declares `version`** en `plugin.json` ni en la entrada del marketplace. Con la caché versionada del install remoto, un `version` fijo **pinea** el plugin: los commits nuevos dejan de propagarse sin que nada avise. Sin el campo, la versión cae al SHA del commit y cada commit es una versión nueva. La doc además desaconseja declararlo en los dos lados, porque el de `plugin.json` gana en silencio.
