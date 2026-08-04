@@ -21,16 +21,5 @@
       "Bash(git log:*)",
       "Bash(git add:*)"
     ]
-  },
-  "extraKnownMarketplaces": {
-    "federicode": {
-      "source": {
-        "source": "github",
-        "repo": "Federicogimenez/claude"
-      }
-    }
-  },
-  "enabledPlugins": {
-    "harness@federicode": true
   }
 }

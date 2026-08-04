@@ -87,7 +87,7 @@ El Dev **no** consulta map ni grafo — son herramientas de comprensión del Arc
 ### La plomería — cómo Claude Code lo *obliga*
 
 - **Plugin + marketplace** distribuyen el formato (roles, comandos, skills, templates) desde GitHub; se mantiene una vez y todos consumen la misma versión (por SHA de commit).
-- **`settings.json`** hace real el scope: `Edit(/**)` acota la edición a la raíz del workspace, `Read(~/.claude/plugins/**)` deja leer la definición del plugin, un `deny` protege el cache. Todo con **rutas relativas, sin paths de máquina** → portable a cualquier equipo.
+- **`settings.json`** respalda el scope: `Edit(/**)` / `Write(/**)` acotan la escritura a la raíz del workspace, `Read(~/.claude/plugins/**)` deja leer la definición del plugin, y sendos `deny` protegen el cache y los **temporales del sistema** (para que ningún scratchpad del entorno se use en silencio). Todo con **rutas relativas, sin paths de máquina** → portable a cualquier equipo. Es respaldo, no jaula: `Bash` escribe donde quiera, así que el scope lo sostiene la norma del formato — los permisos solo encarecen equivocarse.
 - **La confianza del workspace** — los `allow` solo se activan al aceptar el diálogo "Yes, I trust this folder". Nada concede capacidades sin tu consentimiento.
 
 ---
@@ -196,7 +196,7 @@ Por **default, cada workspace es un solo repo git** (monorepo de sub-proyectos):
 
 **Variante poly-repo** (opt-in, cuando el monorepo no encaja — deploy independiente, equipos separados): cada solution que lo justifique lleva su propio `.git` + `.claude/settings.json` (el mismo template portable) + hook nativo de graphify (1 repo = 1 proyecto), el Leader commitea por repo afectado, y los aligners se comparten vía `additionalDirectories`. `/harness:adopt` documenta la adaptación; el `CLAUDE.md` del workspace registra qué topología quedó.
 
-Se trabaja **abriendo la raíz de cada workspace**, nunca la carpeta que los agrupa — el scope de la sesión es estricto a ese workspace. Para **mantener el harness**, la sesión se abre en la **raíz de este repo**. El `settings.json` lo hace cumplir: edita solo bajo la raíz del workspace (`Edit(/**)`) y deniega editar el cache del plugin (`Edit(~/.claude/plugins/**)`) — un `deny` gana sobre cualquier `allow`, así que una sesión de workspace no toca el harness ni por accidente.
+Se trabaja **abriendo la raíz de cada workspace**, nunca la carpeta que los agrupa — el scope de la sesión es estricto a ese workspace: **ningún archivo que la sesión cree vive fuera de esa raíz**, y lo desechable (borradores, salidas intermedias) va a `.scratch/` en la raíz, no al scratchpad ni a la carpeta temporal que ofrezca el entorno. Para **mantener el harness**, la sesión se abre en la **raíz de este repo**. El `settings.json` respalda la regla: escribe solo bajo la raíz del workspace (`Edit(/**)`, `Write(/**)`) y deniega el cache del plugin (`Edit(~/.claude/plugins/**)`) y los temporales del sistema — un `deny` gana sobre cualquier `allow`, así que una sesión de workspace no toca el harness ni por accidente.
 
 ---
 
@@ -217,7 +217,7 @@ Si querés partir de este harness para armar el tuyo:
 1. **Cloná o forkeá** el repo a tu propio GitHub (`tu-usuario/tu-repo`).
 2. **`.claude-plugin/marketplace.json`** — cambiá `name` (el nombre del marketplace, hoy `federicode`) y `owner`. Ese `name` es con el que se instala: `<plugin>@<name>`.
 3. **`harness/.claude-plugin/plugin.json`** — actualizá `author`. El `name` del plugin (`harness`) podés dejarlo o cambiarlo; si lo cambiás, cambia el namespace de los comandos (`/tu-plugin:*`).
-4. **`harness/templates/settings/settings.json`** — apuntá `extraKnownMarketplaces.<tu-marketplace>.source.repo` a `tu-usuario/tu-repo`, y `enabledPlugins` a `<plugin>@<tu-marketplace>`. (Los permisos `Edit(/**)` / `Read(~/.claude/plugins/**)` son portables — no los toques.)
+4. **`harness/templates/settings/settings.json`** — apuntá `extraKnownMarketplaces.<tu-marketplace>.source.repo` a `tu-usuario/tu-repo`, y `enabledPlugins` a `<plugin>@<tu-marketplace>`. (Los permisos `Edit(/**)` / `Write(/**)` / `Read(~/.claude/plugins/**)` y los `deny` de cache y temporales son portables — no los toques.)
 5. **Publicá** con `git push` y consumí como en *Instalación*, con tu repo y tu marketplace. El formato viaja en el plugin (`/harness:format` + los roles) — no hay stub ni clone que configurar en las máquinas que lo consumen.
 
 Revisá `format.md` y los `agents/` por menciones de marca ("federicode") si querés renombrar. No declares `version` — dejá que el SHA versione.

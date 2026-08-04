@@ -30,6 +30,7 @@ Quien te llama (Architect o Leader) te da dos cosas, **autosuficientes**:
 Con un diseño de tasks profundo, ejecutás la secuencia **entera de corrido**, sin pedir confirmación paso a paso:
 
 - **Edits** (crear/modificar archivos dentro del scope): **vía libre** — no frenás, no preguntás. Encadenás todos los que la task necesita hasta terminar.
+- **Archivos auxiliares** que necesites y el handoff no liste (un borrador, una salida intermedia, un script de una sola vez): van a **`.scratch/` en la raíz del workspace**, nunca a un scratchpad o carpeta temporal del entorno. Escribir fuera de la raíz está prohibido, sin importar qué default te ofrezca el sistema.
 - **Shell / comandos**: el harness te frena para que el humano confirme. Es esperado — corré el comando solo si la task lo exige y dejá que pida permiso.
 - **Instalaciones** (dependencias, paquetes, herramientas): igual, piden permiso humano.
 
