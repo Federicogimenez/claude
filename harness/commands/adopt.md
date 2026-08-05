@@ -3,7 +3,9 @@ description: Sembrar este workspace con el harness federicode (proyecto nuevo o 
 argument-hint: "[nombre del trabajo, opcional]"
 ---
 
-Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz de este trabajo). El formato de trabajo es global — vive en el plugin — así que acá solo se crea **lo particular**: la anatomía de memoria y los alineadores. Los templates viven en `${CLAUDE_PLUGIN_ROOT}/templates/`.
+Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz de este trabajo). El formato de trabajo es global — vive en el plugin — así que acá solo se crea **lo particular**: la anatomía de memoria y los **aligners**. Los templates viven en `${CLAUDE_PLUGIN_ROOT}/templates/`.
+
+> **Este comando es la única vía de siembra.** Ningún rol copia templates a mano: la anatomía completa (aligners, memoria por solution, `settings.json` portable, `.gitignore`, topología git, grafo y su hook) solo queda consistente si se siembra desde acá.
 
 **Paso 0 — cargá el formato.** Antes de tocar nada, leé `${CLAUDE_PLUGIN_ROOT}/format.md` **entero** (equivale a `/harness:format`): es el marco que vas a materializar. No adoptes a ciegas. Con eso en contexto, seguí con el diagnóstico.
 
@@ -18,7 +20,7 @@ Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz
 ## 2. Sembrá lo que falte
 
 - Copiá `templates/workspace/CLAUDE.md` a la raíz del workspace y completá sus particulares (qué sub-proyectos existen o se planifican, estado de cada uno). Si ya hay un CLAUDE.md viejo, **destilá sus particulares** al template nuevo — lo que era formato de trabajo queda afuera (lo aporta el plugin).
-- Creá `business/` y `design-system/` desde `templates/shared/` (con su carpeta `resources/`).
+- Creá `business/` desde `templates/business/` y `design-system/` desde `templates/design-system/`, cada uno con su carpeta `resources/`. `design-system/` trae además su carpeta **`manual/`** (fuera de `.claude/`): copiala con su `README.md`, la plantilla `_plantilla-capa.md` y la página `voz.md` sembrada. **No inventes capas** — las escribe el Architect cuando una task las exige. Si el trabajo no tiene texto de cara al usuario, borrá `voz.md`.
 - Por cada **solution** existente o justificada (web, app, backoffice, backend…), sembrá su `.claude/` y el `.graphifyignore` de su raíz desde `templates/solution/`.
 - Copiá `templates/settings/settings.json` al `.claude/settings.json` de la raíz del workspace (o fusionalo si ya existe): trae los permisos del loop, **todos portables — sin un solo path absoluto de máquina**. `Edit(/**)` y `Write(/**)` anclan en la raíz del workspace (escritura libre **dentro** del scope, para que trabajar en scope no cueste más que salirse), `Read(~/.claude/plugins/**)` auto-permite leer la definición del plugin desde el cache (los roles leen su `agents/*.md` sin pedir permiso, en cualquier máquina y cualquier versión instalada), `Edit`/`Write` denegados sobre el cache de plugins (no se edita) y sobre los **temporales del sistema** (`~/AppData/Local/Temp/**`, `//tmp/**`) — el backstop del scope estricto, para que ningún default de scratchpad del entorno se use en silencio; shell y commit con confirmación. El marketplace apunta al repo remoto (`source: github`, `repo: Federicogimenez/claude`) y el plugin queda habilitado (`enabledPlugins`). Si fusionás sobre un settings viejo, **sacá los `allow` de `Edit`/`Write`/`MultiEdit`/`NotebookEdit` sin path** (habilitan el tool en todo el filesystem y perforan el scope) **y cualquier path absoluto de máquina heredado** (`//c/Users/…`, o un marketplace con `source: directory`): se reemplazan por las formas relativas de arriba.
 - Agregá `.claude/settings.local.json` al `.gitignore` del workspace: es el archivo local por-máquina de Claude Code, no se versiona (si ya quedó trackeado en una corrida vieja, `git rm --cached` sin borrarlo).
@@ -32,12 +34,13 @@ Vas a **adoptar el harness federicode** en el workspace actual (la carpeta raíz
 
 | Encontrás | Lo transformás en |
 |---|---|
-| `features/<slug>/` (brief + tasks + doc) | `tasks/NNNN-slug/` de la misma solution — **renumeradas por cronología** (usá el git log del brief para ordenar), slug conservado, **contenido intacto**. Es un rename masivo, no una reescritura. |
+| `features/<slug>/` (brief + tasks + doc) | `.claude/tasks/NNNN-slug/` de la misma solution — **renumeradas por cronología** (usá el git log del brief para ordenar), con el esquema de `${CLAUDE_PLUGIN_ROOT}/templates/task/README.md`: slug conservado, **contenido intacto**. Es un rename masivo, no una reescritura. |
 | `tasks/` ya numeradas | Quedan como están — historial inmutable. |
 | `ideas.md` | Pendientes → conversarlas con el Architect; parqueadas → *Ideas parqueadas* (sección *Evolución* de `map.md`), con motivo. |
-| `standards/` (conventions, migrations…) | Convenciones vigentes → `map.md` (capa curada) de la solution; material de definición de negocio/diseño → `resources/` del shared que corresponda. |
+| `standards/` (conventions, migrations…) | Convenciones vigentes → `map.md` (capa curada) de la solution; material de definición de negocio/diseño → `resources/` del aligner que corresponda. |
 | `map.md` / `memory.md` viejos | Se **fusionan** en el `map.md` nuevo: lo curado a sus secciones, y lo histórico de `memory.md` (principios, deuda, ideas parqueadas) a la sección *Evolución*. Las decisiones cronológicas ya viven en los `brief.md` de `tasks/` — no se duplican. Sin perder contenido. |
 | Docs de diseño/plan dispersos (`plan/`, moodboards, guías, contracts) | `resources/` de `business/` o `design-system/` según corresponda, para que el Architect los procese. |
+| Guías de marca, tono, copy o glosarios ya escritos | `design-system/resources/` — **crudo, sin destilar**. Que se vuelvan páginas del `manual/` es trabajo del Architect, no de la adopción. |
 | `roles/` / `agents/` / `commands/` / `templates/` locales, y skills que **dupliquen el formato** | **Se eliminan** — el plugin los reemplaza. Skills propias del dominio del proyecto (no formato) se conservan. |
 
 ## 4. Grafo Graphify (obligatorio, uno por solution)

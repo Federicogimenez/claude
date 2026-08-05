@@ -12,11 +12,11 @@
 
 | Proyecto | Clase | Estado | Qué es |
 |---|---|---|---|
-| [business/](business/) | shared (alineador) | 🌱 | Autoridad de integración y norte de negocio |
-| [design-system/](design-system/) | shared (alineador) | 🌱 | Lenguaje visual común |
+| [business/](business/) | aligner | 🌱 | Autoridad de integración y norte de negocio |
+| [design-system/](design-system/) | aligner | 🌱 | Lenguaje de marca común — visual y verbal |
 | <web/ · app/ · backoffice/ · backend/…> | solution | — | <qué resuelve> |
 
-> No todo trabajo necesita todos los sub-productos. Se arranca con los que `business/` justifique; los demás se suman cuando la necesidad es real.
+> Los **aligners** definen lo transversal una vez; las **solutions** lo materializan y lo citan. No todo trabajo necesita todas las solutions: se arranca con las que `business/` justifique; las demás se suman cuando la necesidad es real.
 
 ## Particulares
 

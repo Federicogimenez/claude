@@ -9,4 +9,4 @@ _(lo que sí construimos en esta etapa)_
 _(lo que deliberadamente dejamos para después, y por qué)_
 
 ## No-objetivos
-_(cosas que este proyecto explícitamente NO busca ser)_
+_(cosas que este proyecto explícitamente NO busca ser)_ Los permanentes derivan de los *No negociables* de los aligners (`business/`, `design-system/`) — citalos con link en vez de re-declararlos (ver *Cómo se ancla a los aligners* en [README.md](README.md)).
