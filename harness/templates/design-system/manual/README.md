@@ -8,7 +8,7 @@ Esto **no** es un manual de marca de agencia. No lleva rationale, moodboard ni s
 
 Una unidad del lenguaje que una solution podría re-derivar mal por su cuenta.
 
-- **Visuales:** `color`, `tipografia`, `espaciado`, `forma`, `iconografia`, `movimiento`, `componentes`.
+- **Visuales:** `estilo` (la dirección estética; se deriva con `harness:style`), `color`, `tipografia`, `espaciado`, `forma`, `iconografia`, `movimiento`, `componentes`.
 - **Verbal:** `voz` (ver [voz.md](voz.md) — viene sembrada porque su forma no es una tabla de tokens).
 
 Un archivo por capa, `<capa>.md`, duplicando [_plantilla-capa.md](_plantilla-capa.md). La plantilla no se completa ni se borra: se copia.

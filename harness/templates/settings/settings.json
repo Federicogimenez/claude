@@ -28,9 +28,16 @@
         "source": "github",
         "repo": "Federicogimenez/claude"
       }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
     }
   },
   "enabledPlugins": {
-    "harness@federicode": true
+    "harness@federicode": true,
+    "playwright@claude-plugins-official": true
   }
 }

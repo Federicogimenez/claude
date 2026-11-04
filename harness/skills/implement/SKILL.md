@@ -13,4 +13,5 @@ Convertí el handoff del Architect en código funcionando:
 
 - Construí **lo mínimo que cumple el criterio de éxito** del brief — sin features que no pidió.
 - **Reusá lo que ya existe** y espejá los patrones que el handoff señala; el código nuevo se parece al que lo rodea.
+- Si el handoff pide **verificar en el navegador**, recorré lo construido con Playwright MCP y adjuntá las capturas al reporte (no reemplaza el QA humano: lo alimenta).
 - No escribas pruebas acá — ese es el enfoque `test`, y lo dispara el Leader.

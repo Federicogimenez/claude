@@ -5,6 +5,8 @@
 ## Peso
 `liviana` | `completa` — **liviana** salta secciones: llená solo *El problema*, *El enfoque elegido*, *Scope de archivos*, *Supuestos y ambigüedad* (breve) y *Criterio de éxito*. **Completa** llena todo. (El Leader calibra su gate según esto.)
 
+**Verificación con Playwright:** `no` (default: el QA visual alcanza) | `sí — <criterio que aplica>, confirmado por el humano`. Sin las dos cosas, no corre.
+
 ## El problema
 <¿Qué dolor o fricción existe? ¿Qué proceso se quiere agilizar?>
 
@@ -15,10 +17,10 @@
 <¿Qué necesita el proyecto resolver *ahora*? No lo que necesitará después.>
 
 ## El enfoque elegido
-<La solución propuesta, en términos de cómo responde a la necesidad de arriba.>
+<La solución propuesta, en términos de cómo responde a la necesidad de arriba. Si la pieza es narrativa, incluí acá el **guion de beats**: id de cada beat, su idea única y qué cambia respecto del anterior (enfoque `narrate`).>
 
 ## La skill del Dev (el enfoque)
-<Qué enfoque carga el Dev para esta task (`implement`, `test`, una instalada, o uno nuevo a definir). La skill es solo el enfoque; la instrucción condensada + punteros se la pasás en el handoff al delegar.>
+<Qué enfoque carga el Dev para esta task (`implement`, `test`, una instalada, o uno nuevo a definir). Una de terceros sale de `harness:catalog` y la instala el Architect al diseñar esta task. La skill es solo el enfoque; la instrucción condensada + punteros se la pasás en el handoff al delegar.>
 
 ## Vínculo cross-project
 > Solo si esta task es parte de un cambio que toca varios proyectos — que se resuelve con **una task por proyecto**, nunca con una task raíz. Si no aplica, "ninguno".

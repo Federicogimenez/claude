@@ -57,7 +57,7 @@ Esto sí es materia de este README, porque es infraestructura, no formato:
 |---|---|
 | Roles: `agents/` (Architect · Dev · Leader) | `CLAUDE.md` raíz del workspace (sub-proyectos, estado, quirks) |
 | Comandos: `/harness:architect` · `/harness:dev` · `/harness:leader` · `/harness:adopt` | `business/` y `design-system/` (definiciones + `resources/`) |
-| Skills: `implement`, `test`, `format` | El norte (`fundamentals/`) y la memoria de cada solution: grafo Graphify (`graphify-out/`), `map.md`, `tasks/` |
+| Skills: `implement`, `test`, `narrate` (enfoques del Dev) · `catalog`, `style` (referencias del Architect) · `format`; las de terceros se instalan bajo demanda (ver `/harness:format`) | El norte (`fundamentals/`) y la memoria de cada solution: grafo Graphify (`graphify-out/`), `map.md`, `tasks/` |
 | Templates: workspace, solution, business, design-system, task, settings | `.claude/settings.json` de cada repo (habilita el plugin + permisos) |
 | El spec → [`harness/format.md`](harness/format.md), que se carga con `/harness:format` | El código de cada solution |
 
@@ -75,7 +75,7 @@ claude/
     ├── format.md      el spec del formato (roles, loop, anatomía, reglas)
     ├── agents/        architect.md · dev.md · leader.md
     ├── commands/      architect.md · dev.md · leader.md · adopt.md
-    ├── skills/        implement/ · test/ · format/
+    ├── skills/        implement/ · test/ · narrate/ · catalog/ · style/ · format/
     └── templates/     workspace/ · solution/ · business/ · design-system/ · task/ · settings/
 ```
 
